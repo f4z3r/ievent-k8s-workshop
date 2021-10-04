@@ -47,3 +47,10 @@ token returned from the following command into the text field:
 
 Play around with the dashboard and investigate the interesting information it can provide you. Note
 that we have not yet deployed any application.
+
+
+## Kubernetes Hands-On
+
+For the Kubernetes Hands-On, please check the [`kubernetes-handson.md`][k8s-handson] file.
+
+[k8s-handson]: ./kubernetes-handson.md
