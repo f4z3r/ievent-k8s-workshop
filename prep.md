@@ -52,10 +52,10 @@ sudo snap install docker
 And test the installation:
 
 ```bash
-docker run archlinux echo "Get stoked for Climb and Code!!!"
+docker run archlinux echo "Get stoked for the iEvent!!!"
 ```
 
-This should download an image and print `Get stoked for Climb and Code!!!`.
+This should download an image and print `Get stoked for the iEvent!!!`.
 
 #### Kubectl
 
