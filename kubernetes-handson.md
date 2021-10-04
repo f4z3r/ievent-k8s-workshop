@@ -31,3 +31,6 @@ curl -X PUT -d 'some data' sample-app.localhost:9080/my-key
 # you can also just open the URL in your browser
 curl sample-app.localhost:9080/my-key
 ```
+
+## Scale the Application
+
