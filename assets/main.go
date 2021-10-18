@@ -39,6 +39,7 @@ func main() {
 
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         key := html.EscapeString(r.URL.Path[1:])
+        log.Printf("%s called for key %s", r.Method, key)
 
         if r.Method == "GET" {
             val, err := rdb.Get(ctx, key).Result()
