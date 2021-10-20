@@ -378,3 +378,53 @@ Under `spec.rules.host` you will find the advertised host. Change it you your ne
 Test if you can reach your application with the new hostname.
 
 </details>
+
+### Find out the redis password
+Find out the password of your redis instance. Hint: It's a secret.
+
+<details>
+  <summary>Solution</summary>
+
+Get a list of all secrets in your namespace:
+```bash
+$ kubectl get secrets -n demo
+NAME                               TYPE                                  DATA   AGE
+default-token-6pg9n                kubernetes.io/service-account-token   3      3d2h
+cache-redis-cluster                Opaque                                1      3d2h
+sh.helm.release.v1.cache.v1        helm.sh/release.v1                    1      3d2h
+sh.helm.release.v1.sample-app.v1   helm.sh/release.v1                    1
+```
+Open the redis secret:
+```bash
+ kubectl get secret cache-redis-cluster -oyaml -n demo
+```
+
+```yaml
+apiVersion: v1
+data:
+  redis-password: XXXYYYZZZ==
+kind: Secret
+metadata:
+  annotations:
+    meta.helm.sh/release-name: cache
+    meta.helm.sh/release-namespace: demo
+  creationTimestamp: "2021-10-17T21:40:23Z"
+  labels:
+    app.kubernetes.io/instance: cache
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redis-cluster
+    helm.sh/chart: redis-cluster-6.3.8
+  name: cache-redis-cluster
+  namespace: demo
+  resourceVersion: "13101"
+  uid: 6a1e7b9e-92aa-4c07-9749-b792c63ea800
+type: Opaque
+```
+The password is base64 encoded, decode it:
+```bash
+$ echo "XXXYYYZZZ=="|base64 -d && printf "\n"
+yourPassword
+```
+
+</details>
+
