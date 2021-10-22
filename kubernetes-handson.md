@@ -212,7 +212,7 @@ replicaCount: 1
 ```
 Patch the helm release
 ```
-$ cd sample app
+$ cd sample-app
 $ helm upgrade sample-app . --reuse-values --set replicaCount=3 -n demo
 
 Release "sample-app" has been upgraded. Happy Helming!
