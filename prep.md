@@ -49,6 +49,8 @@ newgrp docker
 sudo snap install docker
 ```
 
+> :warning: **Restart your comoputer after installing docker**
+
 And test the installation:
 
 ```bash
