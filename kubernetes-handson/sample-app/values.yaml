@@ -1,0 +1,7 @@
+image:
+  repository: f4z3r/sample-app
+  pullPolicy: IfNotPresent
+  tag: "0.1.2"
+
+replicaCount: 1
+redis_release_name: "cache"
