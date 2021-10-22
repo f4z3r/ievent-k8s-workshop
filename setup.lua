@@ -39,6 +39,34 @@ subjects:
   namespace: kubernetes-dashboard
 ]]
 
+local k3d_config = [[
+apiVersion: k3d.io/v1alpha2
+kind: Simple
+servers: 1
+agents: 3
+kubeAPI:
+  host: "127.0.0.1"
+  hostIP: "127.0.0.1"
+  hostPort: "16445"
+image: rancher/k3s:v1.21.1-k3s1
+ports:
+  - port: 9080:80
+    nodeFilters:
+      - loadbalancer
+  - port: 30000-30010:30000-30010
+    nodeFilters:
+      - server[0]
+options:
+  k3d:
+    wait: true
+  k3s:
+    extraServerArgs:
+      - --kube-proxy-arg=conntrack-max-per-core=0
+      - --kube-apiserver-arg=service-node-port-range=30000-30010
+    extraAgentArgs:
+      - --kube-proxy-arg=conntrack-max-per-core=0
+]]
+
 function get_arg()
   if arg[1] == nil or arg[1] == "prep" or arg[1] == "token" then
     return arg[1]
@@ -117,9 +145,12 @@ end
 function create_cluster(name, registry)
   local cmd = "k3d registry create %s.localhost --port 5000"
   local worked = os.execute(string.format(cmd, registry))
-  cmd = 'k3d cluster create %s -a 3 -s 1 -i rancher/k3s:v1.21.1-k3s1 --api-port 0.0.0.0:6550 -p "9080:80@loadbalancer" --registry-use k3d-%s.localhost:5000'
-  worked = worked and os.execute(string.format(cmd, name, registry))
+  local config_file = os.tmpname()
+  local del_config = write_file(config_file, k3d_config)
+  cmd = 'k3d cluster create %s --registry-use k3d-%s.localhost:5000 --config %s'
+  worked = worked and os.execute(string.format(cmd, name, registry, config_file))
   worked = worked and os.execute("sleep 10s")
+  worked = worked and del_config()
   return worked
 end
 
