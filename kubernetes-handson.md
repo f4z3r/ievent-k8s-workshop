@@ -286,7 +286,7 @@ Inspect the liveness probe in the deployment. You can find it the deployment spe
 
 
 ```bash
-kubectl get deployment sample-app -n demo
+kubectl get deployment sample-app -oyaml -n demo
 ```
 
 Under `spec.template.spec.containers[0]` you can find the following lines:
@@ -311,7 +311,7 @@ Inspect the readiness probe in the deployment. You can find it the deployment sp
   <summary>Solution</summary>
 
 ```bash
-kubectl get deployment sample-app -n demo
+kubectl get deployment sample-app -oyaml -n demo
 ```
 
 Under `spec.template.spec.containers[0]` you can find the following lines:
