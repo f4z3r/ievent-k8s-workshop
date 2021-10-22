@@ -4,6 +4,7 @@
 * [Deploy Kafka](#deploy-kafka)
 * [Scale up](#scale-up)
 * [Run a producer and consumer](#run-a-producer-and-consumer)
+* [Install additional platform components](#install-additional-platform-components)
 
 In this hands-on, we will deploy Confluent for Kubernetes, which is a Kubernetes native Kafka operator. For more information, go to the official documentation: https://docs.confluent.io/operator/current/overview.html
 
