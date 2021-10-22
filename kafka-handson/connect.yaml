@@ -1,0 +1,13 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect
+  namespace: operator
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-server-connect:6.2.0
+    init: confluentinc/confluent-init-container:2.1.0
+  dependencies:
+    kafka:
+      bootstrapEndpoint: kafka:9071
