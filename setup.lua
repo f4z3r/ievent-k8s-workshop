@@ -53,7 +53,7 @@ ports:
   - port: 9080:80
     nodeFilters:
       - loadbalancer
-  - port: 30000-30010:30000-30010
+  - port: 30000-30020:30000-30020
     nodeFilters:
       - server[0]
 options:
@@ -62,7 +62,7 @@ options:
   k3s:
     extraServerArgs:
       - --kube-proxy-arg=conntrack-max-per-core=0
-      - --kube-apiserver-arg=service-node-port-range=30000-30010
+      - --kube-apiserver-arg=service-node-port-range=30000-30020
     extraAgentArgs:
       - --kube-proxy-arg=conntrack-max-per-core=0
 ]]
