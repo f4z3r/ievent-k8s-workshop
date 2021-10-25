@@ -3,6 +3,7 @@
 * [Deploy the Operator](#deploy-the-operator)
 * [Deploy Kafka](#deploy-kafka)
 * [Scale up](#scale-up)
+* [Configure Node-affinity](#node-affinity)
 * [Run a producer and consumer](#run-a-producer-and-consumer)
 * [Install additional platform components](#install-additional-platform-components)
 
@@ -119,6 +120,72 @@ Verify that two new kafka pods are created.
 ```bash
 kubectl get pods -n operator
 ```
+
+</details>
+
+## Configure Node affinity
+Kafka as a distributed message queue has some requirements regarding node placement if you want to be sure you don't run into any issues on your productive environment. One of those requirements is that each kafka broker runs on a seperate node. you should acutally do the same for zookeeper, and ensure that the zookeepers also run on different nodes than the broker itself. Since we are limited with our local setup, we will just ensure that zookeeper and brokers run on on one of the 3 nodes each.
+
+
+First, check how your brokers are actually distributed on the nodes:
+```bash
+kubectl get po -n operator -o wide
+```
+You will see that two brokers share the same node (or you are just lucky it placed them initially correct :-))
+
+The Confluent Operator makes it easy to define that there is only one broker per node, simply by setting the following config:
+
+```yaml
+...
+spec:
+  oneReplicaPerNode: true
+...
+```
+
+-> Now apply this for zookeeper and kafka.
+Note: you might have to delete zookeeper/kafka first in order to get it to work. You can try updating it first though.
+
+If you apply this configuration, you will see that each instance of zookeeper/kafka is on a differnet node.
+
+If you now check again where the pods are located, you will notice something else that might not be desired:
+```bash
+kubectl get po -n operator -o wide
+```
+
+Some of the Pods might be on the master node of kubernetes. that should not be the case. to fix this, you can use node affinities to explicitly tell kubernetes where to place (or not place) the pods.
+Read more about it here: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+
+<details>
+  <summary>Solution</summary>
+
+First you should check how your kubernetes nodes are labelled:
+```bash
+kubectl get nodes -o wide
+kubectl describe node k3d-ievent-server-0
+```
+
+-> You will see for instance the following under Labels: `kubernetes.io/hostname=k3d-ievent-server-0`
+Remember, this is the node that shouldn't be used for our pods. We can add now the following code:
+
+
+```yaml
+...
+spec:
+  podTemplate:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: NotIn
+              values:
+              - k3d-ievent-server-0
+...
+```
+With this we tell kubernetes to NOT schedule the pod on the node with the label `kubernetes.io/hostname=k3d-ievent-server-0`
+If you apply this now for zookeeper and kafka, the pods should be distributed correctly.
+Note: also here, you might first have to delete the deployment complelety and reapply it, as it might not work with an update due to very limtied resources.
 
 </details>
 
