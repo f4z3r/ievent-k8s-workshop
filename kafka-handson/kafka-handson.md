@@ -5,6 +5,7 @@
 * [Scale up](#scale-up)
 * [Configure Node-affinity](#node-affinity)
 * [Run a producer and consumer](#run-a-producer-and-consumer)
+* [Describe a topic](#describe-a-topic)
 * [Install additional platform components](#install-additional-platform-components)
 
 In this hands-on, we will deploy Confluent for Kubernetes, which is a Kubernetes native Kafka operator. For more information, go to the official documentation: https://docs.confluent.io/operator/current/overview.html
@@ -124,7 +125,7 @@ kubectl get pods -n operator
 </details>
 
 ## Configure Node affinity
-Kafka as a distributed message queue has some requirements regarding node placement if you want to be sure you don't run into any issues on your productive environment. One of those requirements is that each kafka broker runs on a seperate node. you should acutally do the same for zookeeper, and ensure that the zookeepers also run on different nodes than the broker itself. Since we are limited with our local setup, we will just ensure that zookeeper and brokers run on on one of the 3 nodes each.
+Kafka as a distributed message queue has some requirements regarding node placement if you want to be sure you don't run into any issues on your productive environment. One of those requirements is that each kafka broker runs on a seperate node. You should acutally do the same for zookeeper, and ensure that the zookeepers also run on different nodes than the broker itself. Since we are limited with our local setup, we will just ensure that zookeeper and brokers run on one of the 3 nodes each.
 
 
 First, check how your brokers are actually distributed on the nodes:
@@ -152,7 +153,7 @@ If you now check again where the pods are located, you will notice something els
 kubectl get po -n operator -o wide
 ```
 
-Some of the Pods might be on the master node of kubernetes. that should not be the case. to fix this, you can use node affinities to explicitly tell kubernetes where to place (or not place) the pods.
+Some of the Pods might be on the master node of kubernetes. that should not be the case. To fix this, you can use node affinities to explicitly tell kubernetes where to place (or not place) the pods.
 Read more about it here: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 
 <details>
@@ -248,6 +249,38 @@ Produce the numbers 1-10 to your topic, and then consume them. What is happening
 Do you observe that the numbers where not consumed in the same sequence as you produced them? This behaviour is expected! Kafka guarantuees ordering of messages only within a partition, but not within a topic. If a topic has multiple partitions (and no custom partitioning is defined), the messages will be written to partitions round-robin. While reading, the messages will not necessarily be consumed in the same order. If you need to guarantee total ordering on topic-level, you need to configure the topic with only 1 partition. Only do that if you really need to, since it limits your possibilities to scale your consumers.
 
 </details>
+
+## Describe a topic
+
+The kafka binaries come with many tools to interact with Kafka. For now, we use the kafka binaries that are installed on the kafka brokers, but usually, you would install the kafka binaries on your local computer and connect to the cluster from there. Here you can download Kafka and find documentation: https://kafka.apache.org/downloads
+
+But for now, we go directly into one Kafka broker and get topic metadata from there.
+
+First, open a bash shell in one of the kafka pods.
+
+<details>
+  <summary>Solution</summary>
+
+```bash
+kubectl -n operator exec -it kafka-0 -- bash 
+
+```
+
+</details>
+
+Then describe the topic `my-first-topic` using the CLI tool `kafka-topics`.
+
+<details>
+  <summary>Solution</summary>
+
+```bash
+kafka-topics --describe --topic my-first-topic --bootstrap-server kafka:9071
+```
+
+</details>
+
+Discuss the results with your neighbour. What do they mean?
+
 
 ## Install additional platform components
 
