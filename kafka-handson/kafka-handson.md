@@ -4,9 +4,11 @@
 * [Deploy Kafka](#deploy-kafka)
 * [Scale up](#scale-up)
 * [Configure Node-affinity](#node-affinity)
-* [Run a producer and consumer](#run-a-producer-and-consumer)
-* [Describe a topic](#describe-a-topic)
-* [Install additional platform components](#install-additional-platform-components)
+* [Run a Producer and Consumer](#run-a-producer-and-consumer)
+* [Describe a Topic](#describe-a-topic)
+* [Deploy Connect and a Connector](#deploy-connect-and-a-connector)
+* [Deploy Control Center](#deploy-control-center)
+* [Deploy Schema Registry](#deploy-the-schema-registry)
 
 In this hands-on, we will deploy Confluent for Kubernetes, which is a Kubernetes native Kafka operator. For more information, go to the official documentation: https://docs.confluent.io/operator/current/overview.html
 
@@ -190,7 +192,7 @@ Note: also here, you might first have to delete the deployment complelety and re
 
 </details>
 
-## Run a producer and consumer
+## Run a Producer and Consumer
 
 First, create a topic:
 
@@ -250,7 +252,7 @@ Do you observe that the numbers where not consumed in the same sequence as you p
 
 </details>
 
-## Describe a topic
+## Describe a Topic
 
 The kafka binaries come with many tools to interact with Kafka. For now, we use the kafka binaries that are installed on the kafka brokers, but usually, you would install the kafka binaries on your local computer and connect to the cluster from there. Here you can download Kafka and find documentation: https://kafka.apache.org/downloads
 
@@ -282,17 +284,87 @@ kafka-topics --describe --topic my-first-topic --bootstrap-server kafka:9071
 Discuss the results with your neighbour. What do they mean?
 
 
-## Install additional platform components
+## Deploy Connect and a Connector
 
-Now let's install connect, the schema registry and control center.
+Install connect and wait until it is fully up.
+
+<details>
+  <summary>Solution</summary>
+
+```bash
+kubectl apply -f connect.yaml -n operator
+```
+
+</details>
+
+Then, deploy the connector `my-first-connector`.
+
+Since the newest version of Confluent for Kubernets (2.1.0), connectors can now also be deployed as custom resources.
+
+<details>
+  <summary>Solution</summary>
+
+```bash
+kubectl apply -f my-first-connector.yaml -n operator
+```
+
+</details>
+
+Study the connector configs in the yaml and discuss with your neighbour what the connector does.
+
+<details>
+  <summary>Solution</summary>
+
+The connector is a sink connector, which means that it writes data from a kafka topic to another system.
+It is a file sink connector, and simply writes the contents of the topic `my-first-topic` to a file named `/tmp/test-sink.txt` in the connect pod.
+
+</details>
+
+Look at the file and verify that the data you produced to the topic with kafkacat arrived at the sink.
+
+<details>
+  <summary>Solution</summary>
+
+```bash
+kubectl -n operator exec -it connect-0 -- bash
+
+$ cd ../../tmp
+$ cat test-sink.txt
+```
+
+</details>
+
+## Deploy Control Center
+
+Control Center is Confluent's commercial UI for the Kafka Platform.
+
+Install it and wait until its fully up.
+
+<details>
+  <summary>Solution</summary>
+
+```bash
+kubectl apply -f controlcenter.yaml -n operator
+```
+
+</details>
+
+Then access it at http://localhost:9080
+
+You will find monitoring information about your topic `my-first-topic` and your connector `my-first-connector`.
+
+## Deploy Schema Registry
+
+(Optional) Install the schema registry and make yourself familiar with it.
 
 <details>
   <summary>Solution</summary>
 
 ```bash
 kubectl apply -f schemaregistry.yaml -n operator
-kubectl apply -f connect.yaml -n operator
-kubectl apply -f controlcenter.yaml -n operator
 ```
 
+You can find documentation about the schema registry here: https://docs.confluent.io/platform/current/schema-registry/index.html
+
 </details>
+
