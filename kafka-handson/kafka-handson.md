@@ -263,3 +263,35 @@ kubectl apply -f controlcenter.yaml -n operator
 ```
 
 </details>
+
+## Expose Controlcenter as ingress
+
+As you have learned from the kubernetes hands-on part, you will have to create an ingress to expose a service if you want to reach it via HTTP(S). Controlcenter is the WebUI of the Confluent platform and it would therefore be nice if we could access it with our browser, right? ;-)
+
+Try to create an ingress similar to the one you created for the sample-app. Note that you have to use the correct service for this (Execute `kubectl get svc -n operator` and check which of the services has an IP and is for Controlcenter). Also, check which Port you have to use! It's not a default Port.
+
+<details>
+  <summary>Solution</summary>
+
+```yaml
+...
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: controlcenter
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: controlcenter-0-internal
+            port:
+              number: 9021
+...
+```
+</details>
+
+After applying the ingress, you should be able to browse to your controlcenter with `localhost:9080`, and see your brokers, topics, etc.
