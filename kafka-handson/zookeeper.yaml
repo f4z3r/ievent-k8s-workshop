@@ -4,7 +4,18 @@ metadata:
   name: zookeeper
   namespace: operator
 spec:
-  replicas: 1
+  replicas: 3
+  oneReplicaPerNode: true
+  podTemplate:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: "kubernetes.io/hostname"
+              operator: NotIn
+              values: 
+              - "k3d-ievent-server-0"
   image:
     application: confluentinc/cp-zookeeper:6.2.0
     init: confluentinc/confluent-init-container:2.1.0
