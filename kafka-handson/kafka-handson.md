@@ -349,9 +349,7 @@ kubectl apply -f controlcenter.yaml -n operator
 
 </details>
 
-Then access it at http://localhost:9080
-
-You will find monitoring information about your topic `my-first-topic` and your connector `my-first-connector`.
+To access it, you will have to complete the step "Expose Controlcenter as ingress"
 
 ## Deploy Schema Registry
 
@@ -399,5 +397,5 @@ spec:
 ```
 </details>
 
-After applying the ingress, you should be able to browse to your controlcenter with `localhost:9080`, and see your brokers, topics, etc.
-
+After applying the ingress, you should be able to browse to your controlcenter with `localhost:9080`.
+You will find monitoring information about your topic `my-first-topic` and your connector `my-first-connector`.
