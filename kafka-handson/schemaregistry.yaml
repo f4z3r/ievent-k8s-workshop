@@ -8,3 +8,13 @@ spec:
   image:
     application: confluentinc/cp-schema-registry:6.2.0
     init: confluentinc/confluent-init-container:2.1.0
+  podTemplate:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: NotIn
+              values:
+              - k3d-ievent-server-0
