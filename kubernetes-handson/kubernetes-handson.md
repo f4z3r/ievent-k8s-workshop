@@ -86,6 +86,16 @@ curl -X PUT -d 'some data' sample-app.localhost:9080/my-key
 curl sample-app.localhost:9080/my-key
 ```
 
+After performing a request, try to find the request in the logs of the application:
+
+```bash
+#get the name of your pod
+kubectl get pods
+kubectl logs YOUR_PODS_NAME
+```
+
+You should be able to see the performed request in the logs.
+
 ## Inspect the State of your Cluster
 
 Check how many pods run in your namespace, and how many of these are from the `sample-app`.
@@ -213,7 +223,7 @@ replicaCount: 1
 Patch the helm release
 ```
 $ cd sample-app
-$ helm upgrade sample-app . --reuse-values --set replicaCount=3 -n demo
+$ helm upgrade sample-app . --values values.yaml --set replicaCount=3 -n demo
 
 Release "sample-app" has been upgraded. Happy Helming!
 NAME: sample-app
