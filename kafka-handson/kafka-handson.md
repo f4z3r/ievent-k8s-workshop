@@ -66,10 +66,10 @@ Install Zookeeper:
 kubectl apply -f zookeeper.yaml -n operator
 ```
 
+Verify that the zookeeper pod is running.
+
 <details>
   <summary>Solution</summary>
-
-Verify that the zookeeper pod is running:
 
 ```bash
 kubectl get pods -n operator
@@ -85,7 +85,7 @@ zookeeper-0                           1/1     Running           0          13m
 
 </details>
 
-Then install the kafka broker. This may also take a few minutes. Also verify if it is are running.
+Then install the kafka broker. This may also take a few minutes. Also verify if it is running.
 
 <details>
   <summary>Solution</summary>
