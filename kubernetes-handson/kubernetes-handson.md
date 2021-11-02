@@ -91,7 +91,7 @@ After performing a request, try to find the request in the logs of the applicati
 ```bash
 #get the name of your pod
 kubectl get pods
-kubectl logs YOUR_PODS_NAME
+kubectl logs POD_NAME
 ```
 
 You should be able to see the performed request in the logs.
@@ -189,6 +189,8 @@ We can see under `replicas` that we have a single desired replica, and that one 
 An application with one replica is not highly available. If the pod crashes, your application is down until Kubernetes has managed to launch a new pod. Let us scale the application to 3 replicas.
 You can try to scale your application via the deployment or via helm. Try both solutions.
 
+Once the application is scaled, you can generate more keys. Try to find out to which pod your request has been sent by checking the logs.
+
 <details>
   <summary>Solution</summary>
 
@@ -250,6 +252,14 @@ sample-app-6474fffc85-swpml   1/1     Running   0          49s
 ```
 
 We can see we 3 pods of the demo-app running now.
+
+The logs can be viewed the same way as before:
+
+```bash
+#get the name of your pod
+kubectl get pods
+kubectl logs YOUR_PODS_NAME
+```
 
 </details>
 
